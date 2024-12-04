@@ -40,7 +40,7 @@ M.M.M.M.M.
         for x in 0..size.0 {
             let a = search(x, y)(1,1) + search(x + off, y + off)(-1,-1);
             let b = search(x, y + off)(1,-1) + search(x + off, y)(-1,1);
-            match a + b { 2 => count += 1, _ => () }
+            count += ((a + b) > 1) as i32;
         }
     }
 
