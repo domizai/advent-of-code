@@ -1,19 +1,19 @@
 import fs from 'fs';
 
-const example = `MMMSXXMASM
-MSAMXMSMSA
-AMXSXMAAMM
-MSAMASMSMX
-XMASAMXAMM
-XXAMMXXAMA
-SMSMSASXSS
-SAXAMASAAA
-MAMMMXMMMM
-MXMXAXMASX`;
+const example = `.M.S......
+..A..MSMS.
+.M.S.MAA..
+..A.ASMSM.
+.M.S.M....
+..........
+S.S.S.S.S.
+.A.A.A.A..
+M.M.M.M.M.
+..........`;
 
 const input = fs.readFileSync('input.txt', 'utf8').trim();
 const grid = input.split("\n").map((row) => row.trim().split(""));
-const word = "XMAS".split("");
+const word = "MAS".split("");
 
 const search = (sx, sy) => (dx, dy) => {
     let { x, y, c } = { x: sx, y: sy, c: 0 };
@@ -24,11 +24,12 @@ const search = (sx, sy) => (dx, dy) => {
     return +(c >= word.length);
 };
 
-let count = 0;
+let count = 0, off = word.length - 1;
 for (let y = 0; y < grid[0].length; y++) {
     for (let x = 0; x < grid.length; x++) {
-        const s = search(x, y);
-        count += s(1,0) + s(-1,0) + s(0,1) + s(0,-1) + s(1,1) + s(-1,-1) + s(1,-1) + s(-1,1);
+        let a = search(x, y)(1,1) + search(x + off, y + off)(-1,-1);
+        let b = search(x, y + off)(1,-1) + search(x + off, y)(-1,1);
+        count += (a + b) > 1;
     }
 }
 
