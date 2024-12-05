@@ -48,7 +48,7 @@ const sum = updates.reduce((invalids, update) => {
     }
     return invalids;
 }, [])
-.map(m => m.sort((a, b) => (rules[a] && rules[a].includes(b)) ? -1 : 1))
+.map(update => update.sort((a, b) => rules[a]?.includes(b) ? -1 : 1))
 .reduce((sum, sorted) => sum + sorted[(sorted.length -1) / 2], 0);
 
 console.log(sum);
