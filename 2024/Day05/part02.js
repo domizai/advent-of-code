@@ -38,19 +38,17 @@ rules = rules.split('\n').map(p => p.split('|').map(n => parseInt(n))).reduce((a
     return acc;
 }, {});
 
-const invalids = updates.reduce((invalid, update) => {
+const sum = updates.reduce((invalids, update) => {
     for (let i = 1; i < update.length; i++) {
         if (!rules[update[i]]) continue;
         if (rules[update[i]].some((right) => update.slice(0, i).includes(right))) {
-            invalid.push(update);
+            invalids.push(update); 
             break;
         }
     }
-    return invalid;
-}, []);
-
-const sum = invalids
-    .map(m => m.sort((a, b) => (rules[a] && rules[a].includes(b)) ? -1 : 1))
-    .reduce((sum, sorted) => sum + sorted[(sorted.length -1) / 2], 0);
+    return invalids;
+}, [])
+.map(m => m.sort((a, b) => (rules[a] && rules[a].includes(b)) ? -1 : 1))
+.reduce((sum, sorted) => sum + sorted[(sorted.length -1) / 2], 0);
 
 console.log(sum);

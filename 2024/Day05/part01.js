@@ -46,5 +46,4 @@ const sum = updates.reduce((sum, update) => {
     return sum + update[(update.length - 1) / 2];
 }, 0);
 
-
 console.log(sum);
