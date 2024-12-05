@@ -16,20 +16,19 @@ fn main() {
     }
 
     let sum: i32 = updates.lines().map(|line| {
-        let update: Vec<i32> = line.split(',').map(|n| n.trim().parse().expect("Invalid number")).collect();
+        let mut update: Vec<i32> = line.split(',').map(|n| n.trim().parse().expect("Invalid number")).collect();
         for i in 1..update.len() {
             if rules.get(&update[i]).map_or(false, |rights| {
                 rights.iter().any(|&right| update[..i].contains(&right))
             }) {
-                let mut sorted_update = update.clone();
-                sorted_update.sort_by(|&a, &b| {
+                update.sort_by(|&a, &b| {
                     if rules.get(&a).map_or(false, |rights| rights.contains(&b)) {
                         Ordering::Less
                     } else {
                         Ordering::Greater
                     }
                 });
-                return sorted_update[(sorted_update.len() - 1) / 2];
+                return update[(update.len() - 1) / 2];
             }
         }
         0
