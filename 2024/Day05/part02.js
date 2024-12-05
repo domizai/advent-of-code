@@ -42,9 +42,8 @@ rules = rules.split('\n').map(p => p.split('|').map(n => parseInt(n)))
 const sum = updates.split("\n").map(p => p.trim().split(',').map(n => parseInt(n)))
     .reduce((sum, update) => {
         for (let i = 1; i < update.length; i++) {
-            if (!rules[update[i]]) continue;
-            if (rules[update[i]].some((right) => update.slice(0, i).includes(right))) {
-                sum += update.sort((a, b) => rules[a]?.includes(b) ? -1 : 1)[(update.length -1) / 2];
+            if (rules[update[i]]?.some((right) => update.slice(0, i).includes(right))) {
+                sum += update.sort((a, b) => rules[a]?.includes(b) ? -1 : 1)[(update.length - 1) / 2];
                 break;
             }
         }
