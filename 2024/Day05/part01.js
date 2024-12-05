@@ -31,19 +31,21 @@ let input = `47|53
 
 input = fs.readFileSync('input.txt', 'utf8').trim();
 let [rules, updates] = input.split("\n\n").map(p => p.trim());
-updates = updates.split("\n").map(p => p.trim().split(',').map(n => parseInt(n)));
-rules = rules.split('\n').map(p => p.split('|').map(n => parseInt(n))).reduce((acc, [left, right] = rule) => {
-    if (!acc[left]) acc[left] = [];
-    acc[left].push(right);
-    return acc;
-}, {});
 
-const sum = updates.reduce((sum, update) => {
-    for (let i = 1; i < update.length; i++) {
-        if (!rules[update[i]]) continue;
-        if(rules[update[i]].some((right) => update.slice(0, i).includes(right))) return sum;
-    }
-    return sum + update[(update.length - 1) / 2];
-}, 0);
+rules = rules.split('\n').map(p => p.split('|').map(n => parseInt(n)))
+    .reduce((acc, [left, right] = rule) => {
+        if (!acc[left]) acc[left] = [];
+        acc[left].push(right);
+        return acc;
+    }, {});
+
+const sum = updates.split("\n").map(p => p.trim().split(',').map(n => parseInt(n)))
+    .reduce((sum, update) => {
+        for (let i = 1; i < update.length; i++) {
+            if (!rules[update[i]]) continue;
+            if(rules[update[i]].some((right) => update.slice(0, i).includes(right))) return sum;
+        }
+        return sum + update[(update.length - 1) / 2];
+    }, 0);
 
 console.log(sum);
