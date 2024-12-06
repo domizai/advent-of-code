@@ -45,9 +45,9 @@ fn main() {
     'a: for y in 0..size.0 {
         for x in 0..size.1 {
             let c = grid[y as usize][x as usize];
-            if syms.contains(&c) {
+            if let Some(i) = syms.iter().position(|&s| s == c) {
                 pos = (x, y);
-                dir_index = syms.iter().position(|&s| s == c).unwrap();
+                dir_index = i;
                 break 'a;
             }
         }
