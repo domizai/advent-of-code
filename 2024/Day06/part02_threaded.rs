@@ -85,12 +85,12 @@ fn main() {
             let mut visited: HashSet<((i32, i32), (i32, i32))> = HashSet::new();
 
             while x >= 0 && x < size.1 && y >= 0 && y < size.0 {
-                if visited.contains(&((x, y), dir)) { return 1; }
                 if grid[y as usize][x as usize] == '#' || (x, y) == wall {
                     (x, y) = (x - dir.0, y - dir.1);
                     dir_index = (dir_index + 1) % 4;
                     dir = dirs[dir_index];
                 }
+                if visited.contains(&((x, y), dir)) { return 1; }
                 visited.insert(((x, y), dir));
                 (x, y) = (x + dir.0, y + dir.1);
             }
