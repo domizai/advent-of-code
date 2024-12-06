@@ -98,10 +98,7 @@ fn main() {
         }));
     }
 
-    let mut count = 0;
-    for handle in handles {
-        count += handle.join().unwrap();
-    }
+    let count = handles.into_iter().map(|h| h.join().unwrap()).sum::<i32>();
     println!("{:?}ms", time.elapsed().as_millis());
     println!("{:?}", count);
 }
