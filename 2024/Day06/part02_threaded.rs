@@ -39,6 +39,7 @@ fn main() {
     let dirs: [(i32, i32); 4] = [(0, -1), (1, 0), (0, 1), (-1, 0)];
     let syms: [char; 4] = ['^', '>', 'v', '<'];
 
+    // find the starting position and direction
     let mut pos = (0, 0);
     let mut dir_index = 0;
     'a: for y in 0..size.0 {
@@ -51,41 +52,57 @@ fn main() {
             }
         }
     }
+    let pos_start = pos;
+    let dir_start = dir_index;
+
+    // first, trace the path
+    let mut trace: HashSet<(i32, i32)> = HashSet::new();
+    let (mut x, mut y) = pos_start;
+    let mut dir_index = dir_start;
+    let mut dir = dirs[dir_index];
+
+    while x >= 0 && x < size.0 && y >= 0 && y < size.1 {
+        if grid[y as usize][x as usize] == '#' {
+            x -= dir.0; y -= dir.1;
+            dir_index = (dir_index + 1) % 4;
+            dir = dirs[dir_index];
+        }
+        trace.insert((x, y));
+        x += dir.0; y += dir.1;
+    }
 
     let mut handles = Vec::new();
     let grid = Arc::new(grid);
-    for j in 0..size.0 {
-        for i in 0..size.1 {
-            if grid[j as usize][i as usize] == '#' { continue; }
-            let wall = (i as i32, j as i32);
-            let grid = Arc::clone(&grid); 
-            handles.push(thread::spawn(move || {
-                let (mut x, mut y) = pos;
-                let mut dir_index = dir_index;
-                let mut dir = dirs[dir_index];
-                let mut visited: HashSet<((i32, i32), (i32, i32))> = HashSet::new();
-                while x >= 0 && x < size.1 && y >= 0 && y < size.0 {
-                    if visited.contains(&((x, y), dir)) { return 1; }
-                    if grid[y as usize][x as usize] == '#' || (x, y) == wall {
-                        x -= dir.0;
-                        y -= dir.1;
-                        dir_index = (dir_index + 1) % 4;
-                        dir = dirs[dir_index];
-                    }
-                    visited.insert(((x, y), dir));
-                    x += dir.0;
-                    y += dir.1;
+
+    for p in trace.iter() {
+        let wall = *p;
+        let grid = Arc::clone(&grid); 
+        
+        handles.push(thread::spawn(move || {
+            let (mut x, mut y) = pos_start;
+            let mut dir_index = dir_start;
+            let mut dir = dirs[dir_index];
+            let mut visited: HashSet<((i32, i32), (i32, i32))> = HashSet::new();
+
+            while x >= 0 && x < size.1 && y >= 0 && y < size.0 {
+                if visited.contains(&((x, y), dir)) { return 1; }
+                if grid[y as usize][x as usize] == '#' || (x, y) == wall {
+                    x -= dir.0; y -= dir.1;
+                    dir_index = (dir_index + 1) % 4;
+                    dir = dirs[dir_index];
                 }
-                0 
-            }));
-        }
+                visited.insert(((x, y), dir));
+                x += dir.0; y += dir.1;
+            }
+            0 
+        }));
     }
 
     let mut count = 0;
     for handle in handles {
         count += handle.join().unwrap();
     }
-    println!("{:?}s", time.elapsed().as_secs());
+    println!("{:?}ms", time.elapsed().as_millis());
     println!("{:?}", count);
 }
 

@@ -18,6 +18,7 @@ fn clear_console() {
 
 // rustc part02.rs -o main && ./main && rm main
 fn main() {
+    let time = std::time::Instant::now();
     let input = "....#.....
 .........#
 ..........
@@ -33,59 +34,71 @@ fn main() {
     let lines: Vec<&str> = input.split("\n").map(|l| l.trim()).collect();
     let mut grid: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
     let size = (grid.len() as i32, grid[0].len() as i32);
-    let cells = size.0 * size.1;
     let dirs:[(i32, i32); 4] = [(0, -1), (1, 0), (0, 1), (-1, 0)];
     let syms:[char; 4] = ['^', '>', 'v', '<'];
     
+    // find the starting position and direction
     let mut pos = (0, 0);
     let mut dir_index = 0;
-    'a: for y in 0..size.1 {
-        for x in 0..size.0 {
-            let c = &grid[y as usize][x as usize];
-            if syms.contains(c) {
+    
+    'a: for y in 0..size.0 {
+        for x in 0..size.1 {
+            let c = grid[y as usize][x as usize];
+            if syms.contains(&c) {
                 pos = (x, y);
-                dir_index = syms.iter().position(|&s| s == *c).unwrap();
+                dir_index = syms.iter().position(|&s| s == c).unwrap();
                 break 'a;
             }
         }
     }
+    let pos_start = pos;
+    let dir_start = dir_index;
 
-    let time = std::time::Instant::now();
-    let mut count = 0;
-    for j in 0..size.1 {
-        for i in 0..size.0 {
-            let cell = &mut grid[j as usize][i as usize];
-            if *cell == '#' { continue; }
-            *cell = '#';
+    // first, trace the path
+    let mut trace: HashSet<(i32, i32)> = HashSet::new();
+    let (mut x, mut y) = pos_start;
+    let mut dir_index = dir_start;
+    let mut dir = dirs[dir_index];
 
-            clear_console();
-            println!("{:.2}%, {:?}s", (j * size.0 + i) as f32 / cells as f32 * 100.0, time.elapsed().as_secs());
-
-            let (mut x, mut y) = pos;
-            let mut dir_index = dir_index;
-            let mut dir = dirs[dir_index];
-            let mut visited: HashSet<((i32, i32), (i32, i32))> = HashSet::new();
-
-            while x >= 0 && x < size.0 && y >= 0 && y < size.1 {
-                if visited.contains(&((x, y), dir)) {
-                    count += 1;
-                    break;
-                }
-                if grid[y as usize][x as usize] == '#' {
-                    x -= dir.0;
-                    y -= dir.1;
-                    dir_index = (dir_index + 1) % 4;
-                    dir = dirs[dir_index];
-                }
-                visited.insert(((x, y), dir));
-                x += dir.0;
-                y += dir.1;
-            }
-            visited.clear();
-            grid[j as usize][i as usize] = '.';
+    while x >= 0 && x < size.0 && y >= 0 && y < size.1 {
+        if grid[y as usize][x as usize] == '#' {
+            x -= dir.0; y -= dir.1;
+            dir_index = (dir_index + 1) % 4;
+            dir = dirs[dir_index];
         }
+        trace.insert((x, y));
+        x += dir.0; y += dir.1;
     }
 
+    let mut count = 0;
+    let mut i = 0;
+    for t in trace.iter() {
+        i+=1;
+        clear_console();
+        println!("{:.2}%, {:.2}ms", i as f32 / trace.len() as f32 * 100.0, time.elapsed().as_millis());
+
+        let (mut x, mut y) = pos_start;
+        let mut dir_index = dir_start;
+        let mut dir = dirs[dir_index];
+        let mut visited: HashSet<((i32, i32), (i32, i32))> = HashSet::new();
+
+        while x >= 0 && x < size.0 && y >= 0 && y < size.1 {
+            if visited.contains(&((x, y), dir)) {
+                count += 1;
+                break;
+            }
+            if grid[y as usize][x as usize] == '#' || (x, y) == *t {
+                x -= dir.0;
+                y -= dir.1;
+                dir_index = (dir_index + 1) % 4;
+                dir = dirs[dir_index];
+            }
+            visited.insert(((x, y), dir));
+            x += dir.0;
+            y += dir.1;
+        }
+        visited.clear();
+    }
     println!("{:?}", count);
 }
 
