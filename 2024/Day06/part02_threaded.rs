@@ -63,12 +63,12 @@ fn main() {
 
     while x >= 0 && x < size.0 && y >= 0 && y < size.1 {
         if grid[y as usize][x as usize] == '#' {
-            x -= dir.0; y -= dir.1;
+            (x, y) = (x - dir.0, y - dir.1);
             dir_index = (dir_index + 1) % 4;
             dir = dirs[dir_index];
         }
         trace.insert((x, y));
-        x += dir.0; y += dir.1;
+        (x, y) = (x + dir.0, y + dir.1);
     }
 
     let mut handles = Vec::new();
@@ -77,7 +77,7 @@ fn main() {
     for p in trace.iter() {
         let wall = *p;
         let grid = Arc::clone(&grid); 
-        
+
         handles.push(thread::spawn(move || {
             let (mut x, mut y) = pos_start;
             let mut dir_index = dir_start;
@@ -87,12 +87,12 @@ fn main() {
             while x >= 0 && x < size.1 && y >= 0 && y < size.0 {
                 if visited.contains(&((x, y), dir)) { return 1; }
                 if grid[y as usize][x as usize] == '#' || (x, y) == wall {
-                    x -= dir.0; y -= dir.1;
+                    (x, y) = (x - dir.0, y - dir.1);
                     dir_index = (dir_index + 1) % 4;
                     dir = dirs[dir_index];
                 }
                 visited.insert(((x, y), dir));
-                x += dir.0; y += dir.1;
+                (x, y) = (x + dir.0, y + dir.1);
             }
             0 
         }));
