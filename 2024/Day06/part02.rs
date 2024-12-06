@@ -83,14 +83,14 @@ fn main() {
         let mut visited: HashSet<((i32, i32), (i32, i32))> = HashSet::new();
 
         while x >= 0 && x < size.0 && y >= 0 && y < size.1 {
-            if visited.contains(&((x, y), dir)) {
-                count += 1;
-                break;
-            }
             if grid[y as usize][x as usize] == '#' || (x, y) == *t {
                 (x, y) = (x - dir.0, y - dir.1);
                 dir_index = (dir_index + 1) % 4;
                 dir = dirs[dir_index];
+            }
+            if visited.contains(&((x, y), dir)) {
+                count += 1;
+                break;
             }
             visited.insert(((x, y), dir));
             (x, y) = (x + dir.0, y + dir.1);
