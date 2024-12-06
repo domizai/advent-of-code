@@ -32,7 +32,7 @@ fn main() {
 
     let input = read_to_string("input.txt").unwrap().trim().to_string();
     let lines: Vec<&str> = input.split("\n").map(|l| l.trim()).collect();
-    let mut grid: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
+    let grid: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
     let size = (grid.len() as i32, grid[0].len() as i32);
     let dirs:[(i32, i32); 4] = [(0, -1), (1, 0), (0, 1), (-1, 0)];
     let syms:[char; 4] = ['^', '>', 'v', '<'];
@@ -40,7 +40,7 @@ fn main() {
     // find the starting position and direction
     let mut pos = (0, 0);
     let mut dir_index = 0;
-    
+
     'a: for y in 0..size.0 {
         for x in 0..size.1 {
             let c = grid[y as usize][x as usize];
