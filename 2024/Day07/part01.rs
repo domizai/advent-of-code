@@ -12,7 +12,7 @@ fn main() {
         let parts: Vec<&str> = line.split(':').collect();
         let target: u64 = parts[0].trim().parse().unwrap();
         let values: Vec<u64> = parts[1].split_whitespace().filter_map(|n| n.trim().parse().ok()).collect();
-        if eval(target, &values[1..], values[0]) { target } else { 0 }
+        eval(target, &values[1..], values[0]) as u64 * target
     }).sum();
     println!("{}", sum);
 }
