@@ -20,15 +20,12 @@ M.M.M.M.M.
     let word = "MAS".chars().collect::<Vec<char>>();
 
     let search = |sx: i32, sy: i32| {
-        let grid = &grid;
-        let word = &word;
+        let (grid, word) = (&grid, &word);
         move |dx: i32, dy: i32| -> i32 {
-            let mut c = 0;
-            let mut x = sx; 
-            let mut y = sy; 
+            let (mut c, mut x, mut y) = (0, sx, sy);
             while x >= 0 && x < size.0 && y >= 0 && y < size.1 && c < word.len() {
                 if grid[x as usize][y as usize] != word[c] { break; }
-                x += dx; y += dy; c += 1;
+                (x, y, c) = (x + dx, y + dy, c + 1);
             }
             (c >= word.len()).into()
         }
