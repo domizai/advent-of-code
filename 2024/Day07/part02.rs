@@ -1,4 +1,5 @@
 use std::fs::read_to_string;
+use std::convert::TryInto;
 
 fn concat(a: u64, b: u64) -> u64 {
     a * 10u64.pow(b.ilog10() + 1) + b
@@ -13,9 +14,9 @@ fn eval(target: u64, values: &[u64], result: u64) -> bool {
 
 fn main() {
     let sum: u64 = read_to_string("input.txt").unwrap().trim().to_string().lines().map(|line| {
-        let parts: Vec<&str> = line.split(':').collect();
-        let target: u64 = parts[0].trim().parse().unwrap();
-        let values: Vec<u64> = parts[1].split_whitespace().filter_map(|n| n.trim().parse().ok()).collect();
+        let [left, right]: [&str; 2] = line.split(':').collect::<Vec<&str>>().try_into().unwrap();
+        let target: u64 = left.trim().parse().unwrap();
+        let values: Vec<u64> = right.split_whitespace().filter_map(|n| n.trim().parse().ok()).collect();
         eval(target, &values[1..], values[0]) as u64 * target
     }).sum();
     println!("{}", sum);
