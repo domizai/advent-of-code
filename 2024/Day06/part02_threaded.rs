@@ -35,7 +35,7 @@ fn main() {
     let input = read_to_string("input.txt").unwrap().trim().to_string();
     let lines: Vec<&str> = input.split("\n").map(|l| l.trim()).collect();
     let grid: Vec<Vec<char>> = lines.iter().map(|l| l.chars().collect()).collect();
-    let size = (grid.len() as i32, grid[0].len() as i32);
+    let size = (grid[0].len() as i32, grid.len() as i32);
     let dirs: [(i32, i32); 4] = [(0, -1), (1, 0), (0, 1), (-1, 0)];
     let syms: [char; 4] = ['^', '>', 'v', '<'];
 
