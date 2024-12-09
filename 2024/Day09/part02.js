@@ -5,12 +5,11 @@ let diskmap = fs.readFileSync('input.txt', 'utf8')
     .split('')
     .map(n => parseInt(n));
 
-let capacities = [];
-let compressed = [];
+let [capacities, compressed] = [[], []];
 
 diskmap.forEach((n, i) => {
     if (i % 2 === 0) {
-        compressed.push(Array(n).fill(i/2));
+        compressed.push(Array(n).fill(i / 2));
     } else {
         compressed.push([]);
         capacities.push(n);
@@ -39,12 +38,12 @@ _1: while (true) {
     r = compressed.length - 1;                    // reset the pointer
 }
 
-// fill the remaining spaces
+// fill the remaining blocks with capacity with nulls
 for (let i = 1; i < compressed.length; i+=2)
     compressed[i].push(...Array(capacities[(i-1)/2]).fill(null));
 
 const checksum = compressed
-    .filter(a => a.length > 0)
+    .filter(a => a.length > 0) // remove empty blocks
     .map(a => a.length == 0 ? [0] : a)
     .flat()
     .map((n, i) => n == null ? 0 : i * parseInt(n))
