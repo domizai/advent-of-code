@@ -1,10 +1,12 @@
 import fs from 'fs';
 
-let diskmap = fs.readFileSync('input.txt', 'utf8').trim().split('').map(n => parseInt(n));
-
 let [capacities, compressed] = [[], []];
 
-diskmap.forEach((n, i) => {
+fs.readFileSync('input.txt', 'utf8')
+    .trim()
+    .split('')
+    .map(n => parseInt(n))
+    .forEach((n, i) => {
     if (i % 2 === 0) {
         compressed.push(Array(n).fill(i / 2));
     } else {

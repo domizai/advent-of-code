@@ -1,13 +1,12 @@
 import fs from 'fs';
 
-let diskmap = fs.readFileSync('input.txt', 'utf8')
-    .trim()
-    .split('')
-    .map(n => parseInt(n));
-
 let [capacities, compressed] = [[], []];
 
-diskmap.forEach((n, i) => {
+fs.readFileSync('input.txt', 'utf8')
+    .trim()
+    .split('')
+    .map(n => parseInt(n))
+    .forEach((n, i) => {
     if (i % 2 === 0) {
         compressed.push(Array(n).fill(i / 2));
     } else {
@@ -27,9 +26,9 @@ _1: while (true) {
     ) {
         if ((r -= 2) < l) { 
             l += 2; // could't find free space, try the next block
-            r = compressed.length - 1;
             if ((m = (l - 1) / 2) > capacities.length) // we tried all blocks
                 break _1;
+            r = compressed.length - 1;
         }
     }
     compressed[l].push(...compressed[r]);         // fill the left block
