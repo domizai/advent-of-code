@@ -19,21 +19,21 @@ for (let r = 0; r < rows; r++)
         if (grid[r][c] === 0)
             trailheads.push([c, r]);
 
-const find = (pos, pre, results) => {
-    if (grid[pos[1]][pos[0]] === 9){
-        results.add(JSON.stringify(pos));
+const find = (p, dest) => {
+    if (grid[p[1]][p[0]] === 9){
+        dest.add(JSON.stringify(p));
         return;
     }
-    [[pos[0] - 1, pos[1]],[pos[0] + 1, pos[1]],[pos[0], pos[1] - 1],[pos[0], pos[1] + 1]]
-    .filter(n => !(n[0] < 0 || n[0] >= cols || n[1] < 0 || n[1] >= rows))
-    .filter(n => grid[n[1]][n[0]] - grid[pos[1]][pos[0]] === 1)
-    .forEach(n => find(n, pos, results));
+    [[p[0]-1, p[1]],[p[0]+1, p[1]],[p[0], p[1]-1],[p[0], p[1]+1]]
+        .filter(n => !(n[0] < 0 || n[0] >= cols || n[1] < 0 || n[1] >= rows))
+        .filter(n => grid[n[1]][n[0]] - grid[p[1]][p[0]] === 1)
+        .forEach(n => find(n, dest));
 }
 
 const sum = trailheads.reduce((acc, n) => {
-    const results = new Set();
-    find(n, null, results);
-    return acc + results.size;
+    const destinations = new Set();
+    find(n, destinations);
+    return acc + destinations.size;
 }, 0);
 
 console.log(sum);
