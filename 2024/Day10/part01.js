@@ -10,7 +10,6 @@ let input = `89010123
 10456732`;
 
 input = fs.readFileSync('input.txt', 'utf8').trim();
-
 const grid = input.split('\n').map(row => row.split('').map(n => parseInt(n)));
 const [rows, cols] = [grid.length, grid[0].length];
 
@@ -20,7 +19,7 @@ for (let r = 0; r < rows; r++)
         if (grid[r][c] === 0)
             trailheads.push([c, r]);
 
-const find = (pos, pre, results) =>{
+const find = (pos, pre, results) => {
     if (grid[pos[1]][pos[0]] === 9){
         results.add(JSON.stringify(pos));
         return;
@@ -38,4 +37,3 @@ const sum = trailheads.reduce((acc, n) => {
 }, 0);
 
 console.log(sum);
-

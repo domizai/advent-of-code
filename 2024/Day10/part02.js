@@ -13,14 +13,13 @@ input = fs.readFileSync('input.txt', 'utf8').trim();
 
 const grid = input.split('\n').map(row => row.split('').map(n => parseInt(n)));
 const [rows, cols] = [grid.length, grid[0].length];
-
 const trailheads = [];
 for (let r = 0; r < rows; r++)
     for (let c = 0; c < cols; c++)
         if (grid[r][c] === 0)
             trailheads.push([c, r]);
 
-const find = (pos, pre, results) =>{
+const find = (pos, pre, results) => {
     if (grid[pos[1]][pos[0]] === 9){
         results.add(pos);
         return;
