@@ -14,12 +14,9 @@ fn main() {
 
     for _ in 0..25 {
         let mut new_stones: HashMap<String, i64> = HashMap::new();
-
+        
         for (stone, &count) in &stone_counts {
-            if stone == "0" {
-                *new_stones.entry("1".to_string()).or_insert(0) += count;
-
-            } else if stone.len() % 2 == 0 {
+            if stone.len() % 2 == 0 {
                 let mid = stone.len() / 2;
                 let left = &stone[..mid];
                 *new_stones.entry(left.to_string()).or_insert(0) += count;
@@ -27,6 +24,9 @@ fn main() {
                 let right = &stone[mid..];
                 let right_int = right.parse::<i64>().unwrap();
                 *new_stones.entry(right_int.to_string()).or_insert(0) += count;
+                
+            } else if stone == "0" {
+                *new_stones.entry("1".to_string()).or_insert(0) += count;
 
             } else {
                 let new_stone = (stone.parse::<i64>().unwrap() * 2024).to_string();
