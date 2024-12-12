@@ -57,7 +57,7 @@ for (let y = 0; y < rows; y++) {
 }
 
 const sum = Object.entries(regionCellsMap)
-    .reduce((acc, [cell, locs]) => acc + locs.length * locs
+    .reduce((acc, [cell, cells]) => acc + cells.length * cells
         .reduce((acc, [x, y]) => acc + fence[fences[y][x]], 0), 0);
 
 console.log(sum);

@@ -59,9 +59,9 @@ for (let y = 0; y < rows; y++) {
 
 // Calculate the number of corners in each region
 const regionCornersMap = {};
-Object.entries(regionCellsMap).forEach(([region, locs]) => {
+Object.entries(regionCellsMap).forEach(([region, cells]) => {
     let c = 0;
-    locs.forEach(([x, y]) => {
+    cells.forEach(([x, y]) => {
         let f = fences[y][x];
         if (f & fence.t && f & fence.r) c++;
         if (f & fence.b && f & fence.l) c++;
