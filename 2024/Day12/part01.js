@@ -22,8 +22,7 @@ const visited = grid.map(row => row.slice());
 const floodfill = (x, y, cell, uid) => {
     if (visited[y]?.[x] !== cell) return;
     visited[y][x] = null;
-    if (!regionCellsMap[uid]) regionCellsMap[uid] = [];
-    regionCellsMap[uid].push([x, y]);
+    (regionCellsMap[uid] ||= []).push([x, y]);
     [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
         .forEach(([i, j]) => floodfill(i, j, cell, uid));
 };

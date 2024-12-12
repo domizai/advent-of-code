@@ -11,8 +11,7 @@ const visited = grid.map(row => row.slice());
 const floodfill = (x, y, cell, uid) => {
     if (visited[y]?.[x] !== cell) return;
     visited[y][x] = null;
-    if (!regionCellsMap[uid]) regionCellsMap[uid] = [];
-    regionCellsMap[uid].push([x, y]);
+    (regionCellsMap[uid] ||= []).push([x, y]);
     [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]
         .forEach(([i, j]) => floodfill(i, j, cell, uid));
 };
@@ -35,13 +34,13 @@ const fences = [];
 for (let y = 0; y < rows; y++) {
     fences.push([]);
     for (let x = 0; x < cols; x++) {
-        let value = 0;
+        let v = 0;
         const cell = grid[y][x];
-        if (cell !== grid[y][x + 1])   value |= fence.r;
-        if (cell !== grid[y + 1]?.[x]) value |= fence.b;
-        if (cell !== grid[y][x - 1])   value |= fence.l;
-        if (cell !== grid[y - 1]?.[x]) value |= fence.t;
-        fences[y].push(value);
+        v |= fence.r * (cell !== grid[y][x + 1])   |
+             fence.b * (cell !== grid[y + 1]?.[x]) |
+             fence.l * (cell !== grid[y][x - 1])   |
+             fence.t * (cell !== grid[y - 1]?.[x]);
+        fences[y].push(v);
     }
 }
 
@@ -50,16 +49,15 @@ const regionCornersMap = {};
 Object.entries(regionCellsMap).forEach(([region, cells]) => {
     let c = 0;
     cells.forEach(([x, y]) => {
-        let f = fences[y][x];
-        if (f & fence.t && f & fence.r) c++;
-        if (f & fence.b && f & fence.l) c++;
-        if (f & fence.r && f & fence.b) c++;
-        if (f & fence.l && f & fence.t) c++;
-        let n;
-        if ((n = fences[y+1]?.[x-1]) && (n & (fence.t | fence.r)) && !(f & (fence.b | fence.l))) c++;
-        if ((n = fences[y-1]?.[x-1]) && (n & (fence.b | fence.r)) && !(f & (fence.t | fence.l))) c++;
-        if ((n = fences[y+1]?.[x+1]) && (n & (fence.t | fence.l)) && !(f & (fence.b | fence.r))) c++;
-        if ((n = fences[y-1]?.[x+1]) && (n & (fence.b | fence.l)) && !(f & (fence.t | fence.r))) c++;
+        let n, f = fences[y][x];
+        c += !!(f & fence.t && f & fence.r) + 
+             !!(f & fence.b && f & fence.l) +
+             !!(f & fence.r && f & fence.b) + 
+             !!(f & fence.l && f & fence.t) +
+             !!((n = fences[y+1]?.[x-1]) && (n & (fence.t | fence.r)) && !(f & (fence.b | fence.l))) +
+             !!((n = fences[y-1]?.[x-1]) && (n & (fence.b | fence.r)) && !(f & (fence.t | fence.l))) +
+             !!((n = fences[y+1]?.[x+1]) && (n & (fence.t | fence.l)) && !(f & (fence.b | fence.r))) +
+             !!((n = fences[y-1]?.[x+1]) && (n & (fence.b | fence.l)) && !(f & (fence.t | fence.r)));
     });
     regionCornersMap[region] = c;
 });
