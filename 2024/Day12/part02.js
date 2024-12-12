@@ -76,7 +76,7 @@ Object.entries(regionCellsMap).forEach(([region, cells]) => {
     regionCornersMap[region] = c;
 });
 
-// Sum of each region's area multiplied by the number of corners
+// Sum of each region's area multiplied by the number of corners (= number  of sides)
 const sum = Object.entries(regionCellsMap)
     .reduce((acc, [region, cells]) => acc + cells.length * regionCornersMap[region], 0);  
 

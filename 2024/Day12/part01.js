@@ -56,6 +56,7 @@ for (let y = 0; y < rows; y++) {
     }
 }
 
+// Sum of each region's area multiplied by the number of fences
 const sum = Object.entries(regionCellsMap)
     .reduce((acc, [cell, cells]) => acc + cells.length * cells
         .reduce((acc, [x, y]) => acc + fence[fences[y][x]], 0), 0);
