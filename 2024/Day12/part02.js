@@ -34,30 +34,29 @@ const fences = [];
 for (let y = 0; y < rows; y++) {
     fences.push([]);
     for (let x = 0; x < cols; x++) {
-        let v = 0;
         const cell = grid[y][x];
-        v |= fence.r * (cell !== grid[y][x + 1])   |
-             fence.b * (cell !== grid[y + 1]?.[x]) |
-             fence.l * (cell !== grid[y][x - 1])   |
-             fence.t * (cell !== grid[y - 1]?.[x]);
-        fences[y].push(v);
+        fences[y].push(
+            fence.r * (cell !== grid[y][x + 1])   |
+            fence.b * (cell !== grid[y + 1]?.[x]) |
+            fence.l * (cell !== grid[y][x - 1])   |
+            fence.t * (cell !== grid[y - 1]?.[x]));
     }
 }
 
 // Calculate the number of corners in each region
 const regionCornersMap = {};
 Object.entries(regionCellsMap).forEach(([region, cells]) => {
-    let c = 0;
+    let [c, r, l, t, b] = [0, fence.r, fence.l, fence.t, fence.b];
     cells.forEach(([x, y]) => {
         let n, f = fences[y][x];
-        c += !!(f & fence.t && f & fence.r) + 
-             !!(f & fence.b && f & fence.l) +
-             !!(f & fence.r && f & fence.b) + 
-             !!(f & fence.l && f & fence.t) +
-             !!((n = fences[y+1]?.[x-1]) && (n & (fence.t | fence.r)) && !(f & (fence.b | fence.l))) +
-             !!((n = fences[y-1]?.[x-1]) && (n & (fence.b | fence.r)) && !(f & (fence.t | fence.l))) +
-             !!((n = fences[y+1]?.[x+1]) && (n & (fence.t | fence.l)) && !(f & (fence.b | fence.r))) +
-             !!((n = fences[y-1]?.[x+1]) && (n & (fence.b | fence.l)) && !(f & (fence.t | fence.r)));
+        c += !!(f & t && f & r) + 
+             !!(f & b && f & l) +
+             !!(f & r && f & b) + 
+             !!(f & l && f & t) +
+             !!((n = fences[y+1]?.[x-1]) && (n & (t | r)) && !(f & (b | l))) +
+             !!((n = fences[y-1]?.[x-1]) && (n & (b | r)) && !(f & (t | l))) +
+             !!((n = fences[y+1]?.[x+1]) && (n & (t | l)) && !(f & (b | r))) +
+             !!((n = fences[y-1]?.[x+1]) && (n & (b | l)) && !(f & (t | r)));
     });
     regionCornersMap[region] = c;
 });

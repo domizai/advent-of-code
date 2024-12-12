@@ -45,13 +45,12 @@ const fences = [];
 for (let y = 0; y < rows; y++) {
     fences.push([]);
     for (let x = 0; x < cols; x++) {
-        let value = 0;
         const cell = grid[y][x];
-        if (cell !== grid[y][x + 1])   value |= fence.right;
-        if (cell !== grid[y + 1]?.[x]) value |= fence.bottom;
-        if (cell !== grid[y][x - 1])   value |= fence.left;
-        if (cell !== grid[y - 1]?.[x]) value |= fence.top;
-        fences[y].push(value);
+        fences[y].push(
+            fence.right  * (cell !== grid[y][x + 1])   |
+            fence.bottom * (cell !== grid[y + 1]?.[x]) |
+            fence.left   * (cell !== grid[y][x - 1])   |
+            fence.top    * (cell !== grid[y - 1]?.[x]));
     }
 }
 
