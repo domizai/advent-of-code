@@ -2,4 +2,4 @@
 input.txt
 main
 Cargo.*
-/target
+target
