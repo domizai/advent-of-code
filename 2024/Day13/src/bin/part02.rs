@@ -2,25 +2,10 @@
 #![allow(non_snake_case)]
 use Day13::machine::Machine;
 
-fn solve (a: (i64, i64), b: (i64, i64), p: (i64, i64)) -> Option<(i64, i64)> {
-    let _a = (a.0 as f64, a.1 as f64);
-    let _b = (b.0 as f64, b.1 as f64);
-    let _p = (p.0 as f64, p.1 as f64);
-    
-    let a: f64 = _a.1 / _a.0;
-    let mut yB: f64 = _b.1 - _b.0 * a;
-    let yT: f64 = _p.1 - _p.0 * a;
-    yB = yT / yB;
-    let yA = (_p.1 - yB * _b.1) / _a.1;
-
-    let y: (i64, i64) = (yA.round() as i64, yB.round() as i64);
-    let pX: i64 = (_a.0 as i64) * y.0 + (_b.0 as i64) * y.1;
-    let pY: i64 = (_a.1 as i64) * y.0 + (_b.1 as i64) * y.1;
-
-    if pX != p.0 as i64 || pY != p.1 as i64 {
-        return None;
-    }
-    Some(y)
+fn solve (a: (f64, f64), b: (f64, f64), p: (f64, f64)) -> (f64, f64) {
+    let y = (p.1 * a.0 - p.0 * a.1) / (a.0 * b.1 - a.1 * b.0);
+    let x = (p.0 - b.0 * y) / a.0;
+    (x, y)
 }
 
 fn main() {
@@ -28,11 +13,10 @@ fn main() {
         .split("\n\n").map(|s| Machine::from_string(s.trim())).collect();
 
     let sum: i64 = machines.iter_mut().map(|m| {
-        let p = (m.price_x + 10000000000000, m.price_y + 10000000000000);
-        match solve((m.a.x, m.a.y), (m.b.x, m.b.y), p) {
-            Some((yA, yB)) => yA * Machine::COST_A + yB * Machine::COST_B,
-            None => 0,
-        }
+        let d = (m.price_x + 10000000000000, m.price_y + 10000000000000);
+        let x = solve((m.a.x as f64, m.a.y as f64), (m.b.x as f64, m.b.y as f64), (d.0 as f64, d.1 as f64));
+        if x.0.floor() != x.0 || x.1.floor() != x.1 { return 0 } 
+        x.0 as i64 * Machine::COST_A + x.1 as i64 * Machine::COST_B
     }).sum();
 
     println!("{}", sum);
