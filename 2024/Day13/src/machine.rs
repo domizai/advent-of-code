@@ -8,14 +8,10 @@ pub struct Button {
 
 impl Button {
     pub fn from_string(s: &str) -> Button {
-        let re = Regex::new(r"X(?<sign_x>\+|-)(?<x>\d+), Y(?<sign_y>\+|-)(?<y>\d+)").unwrap();
+        let re = Regex::new(r"X(?<x>(?:\+|-)\d+), Y(?<y>(?:\+|-)\d+)").unwrap();
         let cap = re.captures(s).unwrap();
-        let sign_x = cap.name("sign_x").unwrap().as_str();
-        let sign_y = cap.name("sign_y").unwrap().as_str();
-        let mut x = cap.name("x").unwrap().as_str().parse::<i64>().unwrap();
-        let mut y = cap.name("y").unwrap().as_str().parse::<i64>().unwrap();
-        if sign_x == "-" { x *= -1; }
-        if sign_y == "-" { y *= -1; }
+        let x = cap.name("x").unwrap().as_str().parse::<i64>().unwrap();
+        let y = cap.name("y").unwrap().as_str().parse::<i64>().unwrap();
         Button { x, y }
     }
 }
