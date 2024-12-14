@@ -4,3 +4,7 @@ main
 Cargo.*
 target
 .cargo-lock
+*.png
+*.jpg
+*.jpeg
+*.gif
