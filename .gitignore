@@ -1,7 +1,7 @@
 .DS_Store
 input.txt
 main
-Cargo.*
+Cargo.lock
 target
 .cargo-lock
 *.png
