@@ -1,0 +1,10 @@
+.DS_Store
+input.txt
+main
+Cargo.lock
+target
+.cargo-lock
+*.png
+*.jpg
+*.jpeg
+*.gif
