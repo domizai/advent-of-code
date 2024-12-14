@@ -3,3 +3,4 @@ input.txt
 main
 Cargo.*
 target
+.cargo-lock

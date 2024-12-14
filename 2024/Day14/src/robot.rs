@@ -1,4 +1,4 @@
-use regex::Regex;
+use regex::{Captures, Regex};
 
 #[derive(Debug, Clone)]
 pub struct Robot {
@@ -10,20 +10,21 @@ pub struct Robot {
 
 impl Robot {
     pub fn from_string(s: &str) -> Robot {
-        let re = Regex::new(r"=(?<x>\d+),(?<y>\d+) v=(?<dx>-?\d+),(?<dy>-?\d+)").unwrap();
-        let cap = re.captures(s).unwrap();
-        let x = cap.name("x").unwrap().as_str().parse::<i64>().unwrap();
-        let y = cap.name("y").unwrap().as_str().parse::<i64>().unwrap();
-        let dx = cap.name("dx").unwrap().as_str().parse::<i64>().unwrap();
-        let dy = cap.name("dy").unwrap().as_str().parse::<i64>().unwrap();
+        let cap = Regex::new(r"=(?<x>\d+),(?<y>\d+) v=(?<dx>-?\d+),(?<dy>-?\d+)").unwrap().captures(s).unwrap();
+        let x = Self::parse(&cap, "x");
+        let y = Self::parse(&cap, "y");
+        let dx = Self::parse(&cap, "dx");
+        let dy = Self::parse(&cap, "dy");
         Robot { x, y, dx, dy }
     }
 
     pub fn update(&mut self, size: (i64, i64), steps: i64) {
-        for _ in 0..steps {
-            self.x = (self.x + self.dx).rem_euclid(size.0);
-            self.y = (self.y + self.dy).rem_euclid(size.1);
-        }
+        self.x = (self.x + self.dx * steps).rem_euclid(size.0);
+        self.y = (self.y + self.dy * steps).rem_euclid(size.1);
+    }
+
+    fn parse(cap: &Captures<'_>, s: &str) -> i64 {
+        cap.name(s).unwrap().as_str().parse::<i64>().unwrap()
     }
 }
 
