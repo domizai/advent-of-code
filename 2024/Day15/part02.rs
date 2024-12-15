@@ -4,6 +4,11 @@ use std::ops::Add;
 // step through: rustc part02.rs -o  main && ./main && rm main
 // result only:  rustc part02.rs -Oo main && ./main && rm main
 
+#[cfg(windows)]
+const NEWLINE: &'static str = "\r\n";
+#[cfg(not(windows))]
+const NEWLINE: &'static str = "\n";
+
 macro_rules! dev_only {
     ($($body:tt)*) => {
         #[cfg(debug_assertions)] {
@@ -133,7 +138,7 @@ fn push(current_pos: EVec, mov: Move, warehouse: &mut Vec<Vec<char>>) -> bool {
 fn main() {
     let input: Vec<String> = std::fs::read_to_string("input.txt").unwrap()
         .trim()
-        .split("\n\n")
+        .split(format!("{}{}", NEWLINE, NEWLINE).as_str())
         .map(|s| s.trim().to_string())
         .collect();
 
