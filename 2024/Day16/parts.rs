@@ -36,7 +36,7 @@ impl Dir {
 
 impl From<Dir> for usize {
     fn from(dir: Dir) -> usize {
-        match dir {
+        match Dir (dir.0.signum(), dir.1.signum()) {
             Dir (-1, 0) | Dir (1, 0) => 0,
             Dir (0, -1) | Dir (0, 1) => 1,
             _ => panic!("Invalid direction"),
@@ -67,22 +67,22 @@ fn solve(
 
     while let Some((pos, dir, cost, parent)) = queue.pop_front() {
         if maze[pos.1][pos.0] == '#' { continue; }
+        let d: usize = dir.into();
 
         // check if the node has been visited before
-        let d: usize = dir.into();
         match map.get_mut(&(pos, d)) {
             // update if cost is lower and replace parent
             Some((parents, existing_cost)) if cost < *existing_cost => {
                 *existing_cost = cost;
                 *parents = parent.into_iter().collect(); 
             }
-            // add to node existing parents if cost is the same
-            Some((parents, existing_cost)) if cost == *existing_cost => {
-                if let Some(p) = parent { parents.insert(p); }
+            Some((parents, existing_cost)) => {
+                // add node to existing parent if cost is the same
+                if cost == *existing_cost {
+                    if let Some(p) = parent { parents.insert(p); }
+                }
                 continue;
             }
-            // skip if cost is higher
-            Some(_) => continue, 
             // node has not been visited, insert it into the map
             None => {
                 let parent = parent.into_iter().collect();
@@ -137,7 +137,7 @@ fn print_maze(maze: &Vec<Vec<char>>, path: &HashSet<Pos>) {
 }
 
 fn main() {
-    let maze: Vec<Vec<char>> = "
+    let input = "
 ###############
 #.......#....E#
 #.#.###.#.###.#
@@ -152,18 +152,10 @@ fn main() {
 #.....#...#.#.#
 #.###.#.#.#.#.#
 #S..#.....#...#
-###############"
-    .trim()
-    .lines()
-    .map(|line| line.chars().collect())
-    .collect();
+###############";
 
-    let maze: Vec<Vec<char>> = std::fs::read_to_string("input.txt").unwrap()
-        .trim()
-        .lines()
-        .map(|s| s.chars().collect())
-        .collect();
-
+    let input = std::fs::read_to_string("input.txt").unwrap();
+    let maze: Vec<Vec<char>> = input.trim().lines().map(|s| s.chars().collect()).collect();
     let size = Pos (maze[0].len(), maze.len());
     let end = Pos (size.0 - 2, 1);
     let start = (Pos (1, size.1 - 2), Dir (1, 0));
