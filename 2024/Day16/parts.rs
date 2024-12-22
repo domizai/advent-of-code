@@ -1,5 +1,5 @@
 // rustc parts.rs -Oo main && ./main
-// to enable dev_only! macro:
+// to enable dev_only! macro and print the solved mace:
 // rustc parts.rs -o main && ./main
 
 #![allow(dead_code, unused_variables)]
@@ -53,16 +53,19 @@ impl Add<Dir> for Pos {
     }
 }
 
+type Node = (Pos, usize);
+type Cost = isize;
+
 fn solve(
     maze: &Vec<Vec<char>>, 
     start: (Pos, Dir), 
     end: &Pos
-) -> HashMap<(Pos, usize), (HashSet<(Pos, usize)>, isize)> {
+) -> HashMap<Node, (HashSet<Node>, Cost)> {
 
     // (position, direction) -> (parents, cost)
-    let mut map: HashMap<(Pos, usize), (HashSet<(Pos, usize)>, isize)> = HashMap::new();
+    let mut map: HashMap<Node, (HashSet<Node>, Cost)> = HashMap::new();
     // (position, direction, cost, parent)
-    let mut queue: VecDeque<(Pos, Dir, isize, Option<(Pos, usize)>)> = VecDeque::new();
+    let mut queue: VecDeque<(Pos, Dir, Cost, Option<Node>)> = VecDeque::new();
     queue.push_back((start.0, start.1.into(), 0, None));
 
     while let Some((pos, dir, cost, parent)) = queue.pop_front() {
@@ -103,8 +106,8 @@ fn solve(
 }
 
 fn backtrace(
-    map: &HashMap<(Pos, usize), (HashSet<(Pos, usize)>, isize)>, 
-    start_node: (Pos, usize), 
+    map: &HashMap<Node, (HashSet<Node>, Cost)>, 
+    start_node: Node, 
 ) -> HashSet<Pos> {
 
     let mut path: HashSet<Pos> = HashSet::new();
@@ -163,13 +166,13 @@ fn main() {
     // solve the maze
     let map = solve(&maze, start, &end);
 
-    // find the direction with the lowest cost at the end
-    let dir: usize = match (map.get(&(end, 0)), map.get(&(end, 1))) {
-        (Some((_, cost1)), Some((_, cost2))) => if cost1 < cost2 { 0 } else { 1 },
-        (Some(_), None) => 0,
-        (None, Some(_)) => 1,
-        _ => panic!("No path found"),
-    };
+    // find the direction with the lowest cost at the end (argmin)
+    let dir = [0, 1].iter()
+        .filter_map(|&x| map.get(&(end, x)))
+        .enumerate()
+        .min_by_key(|(_, (_, cost))| *cost)
+        .map(|(index, _)| index)
+        .unwrap();
 
     // part 1
     println!("lowest score: {:?}", map.get(&(end, dir)).unwrap().1);
